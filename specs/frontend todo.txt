@@ -1,0 +1,32 @@
+- [ ] Step 1: Set up a basic Flutter Web app entry point and theme (dark, mobile-first, responsive).
+- [ ] Step 2: Implement a reusable TouchButton component:
+    - [ ] Minimum 44x44px touch target
+    - [ ] Visual feedback within 100ms
+    - [ ] Haptic feedback (where supported)
+    - [ ] Focus and loading states
+    - [ ] Accessibility (ARIA roles/labels)
+    - [ ] Long-press support (300ms)
+- [ ] Step 3: Implement a ScoreDisplay component:
+    - [ ] Large, viewport-based font sizing (8vw)
+    - [ ] Animations for score changes
+- [ ] Step 4: Implement a PlayerCard component:
+    - [ ] Minimum 120px height
+    - [ ] Responsive layout
+    - [ ] Winner highlighting
+    - [ ] Touch spacing (8px min)
+- [ ] Step 5: Implement a ScoreControls component:
+    - [ ] +1, -1, +10, -10 buttons using TouchButton
+    - [ ] Thumb zone layout (bottom 50% of screen)
+    - [ ] Undo functionality
+    - [ ] Immediate/optimistic feedback
+    - [ ] Gesture support (long-press for rapid changes)
+- [ ] Step 6: Implement a GameBoard component:
+    - [ ] Responsive for 2–6 players
+    - [ ] Scrollable for 5+ players
+    - [ ] Connection status indicator
+- [ ] Step 7: Wire up all components to MockApiService for data
+    - [ ] Use mock data for game, players, and game types
+    - [ ] Simulate async loading and error states
+- [ ] Step 8: Implement a simple navigation flow (e.g., Home → Game Setup → GameBoard)
+- [x] Step 9: Ensure all components are accessible, mobile-optimized, and follow the dark theme
+- [ ] Step 10: Test on various screen sizes and with keyboard navigation

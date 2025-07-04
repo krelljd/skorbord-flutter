@@ -1,0 +1,37 @@
+name: skorbord_flutter
+version: 1.0.0+1
+description: >-
+  Skorbord: A responsive, accessible, dark-themed scoring app for web, optimized to run on Raspberry Pi and used on touch devices.
+
+publish_to: 'none' # This is a private project, not for pub.dev
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons:
+  socket_io_client:
+  http:
+  shared_preferences:
+  provider:
+  go_router:
+  lottie: ^2.7.0
+  # Add other dependencies as needed
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints:
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/animations/confetti.json
+  # Uncomment and add asset paths if you use images or fonts
+  # fonts:
+  #   - family: CustomFont
+  #     fonts:
+  #       - asset: fonts/CustomFont-Regular.ttf

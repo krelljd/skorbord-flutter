@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Flutter: Run Web App",
+			"command": "flutter run -d chrome",
+			"group": "build",
+			"problemMatcher": [
+				"$dart-build_runner"
+			],
+			"isBackground": false
+		},
+		{
+			"type": "shell",
+			"label": "Flutter: Run Web App + Backend",
+			"command": "Start-Process -NoNewWindow -FilePath npm -ArgumentList 'start' -WorkingDirectory ../skorbord-backend; flutter run -d chrome",
+			"group": "build",
+			"problemMatcher": [],
+			"isBackground": false
+		}
+	]
+}

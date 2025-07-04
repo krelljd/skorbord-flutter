@@ -1,0 +1,21 @@
+{
+  "dart.flutterSdkPath": "${workspaceFolder}/.fvm/flutter_sdk",
+  "dart.lineLength": 100,
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.rulers": [100],
+  "files.exclude": {
+    "**/.dart_tool": true,
+    "**/.idea": true,
+    "**/.vscode": false,
+    "**/build": true,
+    "**/web/build": true
+  },
+  "search.exclude": {
+    "**/.dart_tool": true,
+    "**/build": true,
+    "**/web/build": true
+  },
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true
+}
