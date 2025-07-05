@@ -25,7 +25,7 @@
 - Game types can be favorited.
 - Users should be able to choose a randomized game to play based on favorited game types.
 - All of this should be tracked independently per SQID environment.
-- When starting to update scores by pressing scoring buttons, there should be a running tally of scores that is updated if the score continues to change within a 3 second window. the scoring mini-session total should fade away 3 seconds after the last scoring update. it should continue to adjust if the scores are updated for the player within the 3 second window.
+- When starting to update scores by pressing scoring buttons, there should be a running tally of scores that is updated if the score continues to change within a 3 second window. The scoring mini-session total should fade away 3 seconds after the last scoring update. it should continue to adjust if the scores are updated for the player within the 3 second window. It should be in a highlighted color, shown bold and displayed like a superscript value showing +# or -#.
 
 ## System Logic
 

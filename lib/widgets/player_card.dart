@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/player.dart';
 import 'touch_button.dart';
+import 'score_display.dart';
 
 class PlayerCard extends StatefulWidget {
   final Player player;
@@ -41,8 +42,7 @@ class PlayerCard extends StatefulWidget {
   State<PlayerCard> createState() => _PlayerCardState();
 }
 
-class _PlayerCardState extends State<PlayerCard>
-    with SingleTickerProviderStateMixin {
+class _PlayerCardState extends State<PlayerCard> with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<double> _scaleAnim;
   bool _isPulsing = false;
@@ -86,12 +86,29 @@ class _PlayerCardState extends State<PlayerCard>
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final playerColor = widget._playerColor(theme, player.id);
+    // Dynamically scale button size and spacing for 3+ digit scores
+    // This ensures the increment/decrement buttons remain touch-friendly and visually balanced
+    // as the score grows, preventing crowding and maintaining accessibility.
+    final digitCount = player.score.abs().toString().length;
+    double buttonScale = 1.0;
+    double buttonSpacing = 16.0;
+    double buttonMargin = 8.0;
+    if (digitCount == 3) {
+      buttonScale = 0.82; // For 3-digit scores, scale buttons down and move them outward
+      buttonSpacing = 20.0;
+      buttonMargin = 12.0;
+    } else if (digitCount >= 4) {
+      buttonScale = 0.68; // For 4+ digit scores, scale further and increase spacing
+      buttonSpacing = 24.0;
+      buttonMargin = 16.0;
+    }
+    // These values were chosen to match the visual balance in the design screenshots and
+    // to ensure a minimum touch area for accessibility on all devices.
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Semantics(
         button: true,
-        label:
-            'Player: ${player.name}, score: ${player.score}${highlight ? ', winner' : ''}',
+        label: 'Player: ${player.name}, score: ${player.score}${highlight ? ', winner' : ''}',
         selected: highlight,
         focusable: true,
         child: FocusableActionDetector(
@@ -110,12 +127,11 @@ class _PlayerCardState extends State<PlayerCard>
               focusColor: colorScheme.primary.withAlpha((0.2 * 255).round()),
               child: Container(
                 constraints: const BoxConstraints(minHeight: 140),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final cardHeight = constraints.maxHeight;
-                    final buttonSize = cardHeight;
+                    final buttonSize = cardHeight * buttonScale;
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -128,9 +144,7 @@ class _PlayerCardState extends State<PlayerCard>
                               Row(
                                 children: [
                                   Icon(
-                                    highlight
-                                        ? Icons.emoji_events
-                                        : Icons.person,
+                                    highlight ? Icons.emoji_events : Icons.person,
                                     color: playerColor,
                                     size: 32,
                                   ),
@@ -138,11 +152,8 @@ class _PlayerCardState extends State<PlayerCard>
                                   Expanded(
                                     child: Text(
                                       player.name,
-                                      style:
-                                          theme.textTheme.titleMedium?.copyWith(
-                                        fontWeight: highlight
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
+                                      style: theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
                                         color: playerColor,
                                       ),
                                       maxLines: 1,
@@ -152,27 +163,23 @@ class _PlayerCardState extends State<PlayerCard>
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text(
-                                player.score.toString(),
-                                style: theme.textTheme.displayLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: playerColor,
-                                  fontSize: 52, // Even larger for prominence
-                                ),
-                                semanticsLabel: 'Score: ${player.score}',
+                              // Use ScoreDisplay for animated score and tally
+                              ScoreDisplay(
+                                score: player.score,
+                                highlight: highlight,
+                                scoreDisplayKey: player.id,
                               ),
                             ],
                           ),
                         ),
                         // Right: Two perfectly square buttons, height = card height, with margin
-                        const SizedBox(width: 16),
+                        SizedBox(width: buttonSpacing),
                         ScaleTransition(
                           scale: _scaleAnim,
                           child: Container(
-                            margin: const EdgeInsets.only(
-                                right: 8), // margin from card edge
+                            margin: EdgeInsets.only(right: buttonMargin),
                             height: buttonSize,
-                            width: buttonSize * 2 + 8, // account for spacing
+                            width: buttonSize * 2 + 8,
                             child: Row(
                               children: [
                                 Container(
@@ -182,8 +189,7 @@ class _PlayerCardState extends State<PlayerCard>
                                   child: TouchButton(
                                     minSize: buttonSize - 8,
                                     color: playerColor,
-                                    semanticsLabel:
-                                        'Decrease score. Long-press to decrease by 10.',
+                                    semanticsLabel: 'Decrease score. Long-press to decrease by 10.',
                                     onTap: widget.onDecrement,
                                     onLongPress: () {
                                       if (widget.onDecrement10 != null) {
@@ -201,8 +207,7 @@ class _PlayerCardState extends State<PlayerCard>
                                   child: TouchButton(
                                     minSize: buttonSize - 8,
                                     color: playerColor,
-                                    semanticsLabel:
-                                        'Increase score. Long-press to increase by 10.',
+                                    semanticsLabel: 'Increase score. Long-press to increase by 10.',
                                     onTap: widget.onIncrement,
                                     onLongPress: () {
                                       if (widget.onIncrement10 != null) {

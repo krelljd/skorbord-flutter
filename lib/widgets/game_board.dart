@@ -41,8 +41,7 @@ class _GameBoardState extends State<GameBoard> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Game: ${game.gameTypeId}',
-                    style: Theme.of(context).textTheme.titleMedium),
+                Text('Game: ${game.gameTypeId}', style: Theme.of(context).textTheme.titleMedium),
                 Row(
                   children: [
                     Icon(
@@ -67,10 +66,8 @@ class _GameBoardState extends State<GameBoard> {
           Expanded(
             child: playerCount <= 4
                 ? GridView.builder(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
@@ -126,11 +123,9 @@ class _GameBoardState extends State<GameBoard> {
                     },
                   )
                 : ListView.separated(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     itemCount: playerCount,
-                    separatorBuilder: (context, idx) =>
-                        const SizedBox(height: 8),
+                    separatorBuilder: (context, idx) => const SizedBox(height: 8),
                     itemBuilder: (context, idx) {
                       final player = players[idx];
                       return PlayerCard(
@@ -218,9 +213,8 @@ class _CreateGameForm extends StatefulWidget {
 class _CreateGameFormState extends State<_CreateGameForm> {
   final _formKey = GlobalKey<FormState>();
   final _gameTypeController = TextEditingController();
-  final List<TextEditingController> _playerControllers = [
-    TextEditingController()
-  ];
+  final List<TextEditingController> _playerControllers = [TextEditingController()];
+  final List<FocusNode> _playerFocusNodes = [FocusNode()];
 
   @override
   void dispose() {
@@ -228,19 +222,30 @@ class _CreateGameFormState extends State<_CreateGameForm> {
     for (final c in _playerControllers) {
       c.dispose();
     }
+    for (final f in _playerFocusNodes) {
+      f.dispose();
+    }
     super.dispose();
   }
 
   void _addPlayerField() {
     setState(() {
       _playerControllers.add(TextEditingController());
+      final newFocus = FocusNode();
+      _playerFocusNodes.add(newFocus);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        newFocus.requestFocus();
+      });
     });
   }
 
   void _removePlayerField(int idx) {
     setState(() {
       if (_playerControllers.length > 1) {
+        _playerControllers[idx].dispose();
         _playerControllers.removeAt(idx);
+        _playerFocusNodes[idx].dispose();
+        _playerFocusNodes.removeAt(idx);
       }
     });
   }
@@ -248,10 +253,8 @@ class _CreateGameFormState extends State<_CreateGameForm> {
   void _createGame(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
     final gameType = _gameTypeController.text.trim();
-    final players = _playerControllers
-        .map((c) => c.text.trim())
-        .where((name) => name.isNotEmpty)
-        .toList();
+    final players =
+        _playerControllers.map((c) => c.text.trim()).where((name) => name.isNotEmpty).toList();
     if (players.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('At least 2 players required.')),
@@ -264,10 +267,7 @@ class _CreateGameFormState extends State<_CreateGameForm> {
       gameTypeId: gameType.isEmpty ? 'default' : gameType,
       players: [
         for (final name in players)
-          Player(
-              id: name + now.microsecondsSinceEpoch.toString(),
-              name: name,
-              score: 0),
+          Player(id: name + now.microsecondsSinceEpoch.toString(), name: name, score: 0),
       ],
       status: 'active',
       createdAt: now,
@@ -290,8 +290,7 @@ class _CreateGameFormState extends State<_CreateGameForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Create New Game',
-                      style: Theme.of(context).textTheme.headlineSmall),
+                  Text('Create New Game', style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _gameTypeController,
@@ -301,24 +300,16 @@ class _CreateGameFormState extends State<_CreateGameForm> {
                   ..._playerControllers.asMap().entries.map((entry) {
                     final idx = entry.key;
                     final controller = entry.value;
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: controller,
-                            decoration: InputDecoration(
-                                labelText: 'Player ${idx + 1} Name'),
-                            validator: (v) => (v == null || v.trim().isEmpty)
-                                ? 'Enter a name'
-                                : null,
-                          ),
+                    final focusNode = _playerFocusNodes[idx];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: TextFormField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          labelText: 'Player ${idx + 1}',
                         ),
-                        if (_playerControllers.length > 2)
-                          IconButton(
-                            icon: const Icon(Icons.remove_circle_outline),
-                            onPressed: () => _removePlayerField(idx),
-                          ),
-                      ],
+                      ),
                     );
                   }),
                   const SizedBox(height: 8),
